@@ -8,7 +8,5 @@ setup(name='pyadtpulse',
       author_email='mariniertje@gmail.com',
       license='MIT',
       packages=['pyadtpulse'],
-      install_requires=[
-        "selenium",
-	  ],
+      install_requires=[],
       zip_safe=True)
