@@ -20,35 +20,6 @@ import voluptuous as vol
 _LOGGER = logging.getLogger(__name__)
 
 """
-Declare all constants
-"""
-ADTPULSE_DOMAIN = 'https://portal.adtpulse.com'
-COOKIE_PATH = './adtpulse_cookies.pickle'
-ADTPULSE_JSON_PREAMBLE_SIZE = 18
-DEFAULT_LOCALE = 'en_US'
-HTML_PARSER = 'html.parser'
-ERROR_FIND_TAG = 'div'
-ERROR_FIND_ATTR = {'id': 'warnMsgContents'}
-CSRF_FIND_TAG = 'input'
-CSRF_FIND_ATTR = {'name': 'X-token'}
-VALUE_ATTR = 'value'
-ATTRIBUTION = 'Information provided by portal.adtpulse.com'
-
-"""
-Determine the current code version used on portal.adtpulse.com
-"""
-def adtpulse_version(ADTPULSE_DOMAIN):
-    """Determine current ADT Pulse version"""
-    resp = requests.get(ADTPULSE_DOMAIN)
-    parsed = BeautifulSoup(resp.content, HTML_PARSER)
-    adtpulse_script = parsed.find_all('script', type='text/javascript')[4].string
-    if "=" in adtpulse_script:
-	param, value = adtpulse_script.split("=",1)
-    adtpulse_version = value
-    adtpulse_version = adtpulse_version[1:-2]
-    return(adtpulse_version)
-
-"""
 Interact with portal.adtpulse.com
 """
 
@@ -84,6 +55,36 @@ class Adtpulse(object):
     portal.adtpulse.com. The basic functions of checking system status and arming
     and disarming the system are possible.
     """
+
+    """
+    ADT Pulse constants
+    """
+    COOKIE_PATH = './adtpulse_cookies.pickle'
+    ADTPULSE_JSON_PREAMBLE_SIZE = 18
+    DEFAULT_LOCALE = 'en_US'
+    HTML_PARSER = 'html.parser'
+    ERROR_FIND_TAG = 'div'
+    ERROR_FIND_ATTR = {'id': 'warnMsgContents'}
+    VALUE_ATTR = 'value'
+    ATTRIBUTION = 'Information provided by portal.adtpulse.com'
+    
+    # ADT Pulse baseURL
+    ADTPULSE_DOMAIN = 'https://portal.adtpulse.com'
+
+    """
+    Determine the current code version used on portal.adtpulse.com
+    """
+    def adtpulse_version(ADTPULSE_DOMAIN):
+        """Determine current ADT Pulse version"""
+        resp = requests.get(ADTPULSE_DOMAIN)
+        parsed = BeautifulSoup(resp.content, HTML_PARSER)
+        adtpulse_script = parsed.find_all('script', type='text/javascript')[4].string
+        if "=" in adtpulse_script:
+            param, value = adtpulse_script.split("=",1)
+        adtpulse_version = value
+        adtpulse_version = adtpulse_version[1:-2]
+        return(adtpulse_version)
+
 
     # Page elements on portal.adtpulse.com that are needed
     # Using a dict for the attributes to set whether it is a name or id for locating the field
@@ -173,4 +174,5 @@ class Adtpulse(object):
             if "." in string:
                 param, value = string.split(".",1)
             adtpulse_alarmstatus = param
-        return(adtpulse_alarmstatus)
+            state = adtpulse_alarmstatus
+        return(state)
